@@ -48,7 +48,6 @@
             if (l10n != null) {
               value = l10n.get(value);
             }
-            console.log(attr, value);
             return el.attr(attr, value);
           }
         };

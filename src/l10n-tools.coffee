@@ -24,6 +24,5 @@ angular.forEach ['title', 'placeholder', 'href'], (attr) ->
 			value = attrs[directive]
 			# try to localize value is localization service is available
 			value = l10n.get(value) if l10n?
-			console.log(attr, value)
 			el.attr(attr, value)
 	]
