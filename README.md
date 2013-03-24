@@ -1,4 +1,5 @@
 # L10n module for Angular.js
+## [See demo](http://4vanger.github.com/angular-l10n/)
 ***
 ## Installation
 ```javascript
@@ -45,3 +46,5 @@ then you will get following attribute directives:
 * l10n-html - set localized value as element HTML
 * l10n-text - set localized value as element text content
 * l10n-title, l10n-href, l10n-placeholder - set localized value as corresponding attribute value
+
+Within a message you could reference another message using "@" sign.
