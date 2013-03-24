@@ -1,0 +1,26 @@
+{
+  "name": "l10n-angular",
+  "version": "0.1.0",
+  "author": "Andrew Kulinich <andrew@4vanger.com>",
+  "description": "L10n module for Angular.js",
+  "contributors": [ 
+    {
+      "name": "Andrew Kulinich",
+      "email": "github@4vanger.com"
+    } 
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/4vanger/angular-l10n.git"
+  },
+  "keywords": [
+    "angular.js",
+    "l10n"
+  ],
+  "devDependencies" : {
+    "grunt" : "~0.4.1",
+    "grunt-contrib-coffee" : "~0.6.4",
+    "grunt-contrib-uglify" : "~0.1.x"
+  },
+  "license": "MIT"
+}
