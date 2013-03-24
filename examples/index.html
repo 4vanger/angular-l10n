@@ -4,15 +4,32 @@
 	<title>L10n demo</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.min.js"></script>
 	<script src="../build/l10n-with-tools.js"></script>
+	<link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
 </head>
 <body>
-<div ng-controller="MyCtrl">
+<div ng-controller="MyCtrl" class="container">
+	<h1>Get message resources</h1>
+	<h2>Using directives</h2>
+	<p>Just use any of l10n-text, l10n-html, l10n-placeholder, l10n-href, l10n-title directives.</p>
 	<ul>
 		<li l10n-text="text"></li>
 		<li l10n-html="html"></li>
 		<li l10n-title="title">Mouse over here to see localized title</li>
-		<li><input type="text" l10n-placeholder="placeholder"/></li>
+		<li><input type="text" l10n-placeholder="placeholder" class="span4"></li>
 		<li><a l10n-href="href">This link has localized href</a></li>
+	</ul>
+	<h2>Using interpolation</h2>
+	<p>Assign l10n service to some variable is a scope and then use service as a regular hash.</p>
+	<p class="text-warning">Inserting variable using interpolation creates a binding. Having too many bindings may slow down your application. Try to use directives instead.</p>
+	<ul>
+		<li>{{l10n.interpolation}}</li>
+		<li>{{l10n.get('usingGet')}}</li>
+	</ul>
+	<h1>Translate once</h1>
+	<p>If you have multiple entries for the same phrase within your application - move it into one generic resource and reference it using "@" sign from other resources. When translating to different language you will need to translate only one phrase.</p>
+	<ul>
+		<li l10n-text="referencedMessage"></li>
+		<li l10n-text="referencedReferencedMessage"></li>
 	</ul>
 </div>
 
@@ -23,12 +40,20 @@
 		html: 'This line is inserted using l10n-html directive. And it has <b><i>HTML markup</i></b>',
 		title: 'This title is inserted using l10n-title directive',
 		placeholder: 'This placeholder is inserted using l10n-placeholder directive',
-		href: 'http://en.example.com/Localized link'
+		href: 'http://en.example.com/Localized link',
+
+		interpolation: 'This message is inserted through interpolation using object property.',
+		usingGet: 'This message is inserted through interpolation using .get() method.',
+
+		originalMessage: 'This is message from "originalMessage" resource',
+		referencedMessage: '@originalMessage',
+		referencedReferencedMessage: '@referencedMessage'
 	  });
 	}]);
 
 	angular.module('MyApp', ['l10n', 'l10n-tools', 'my-l10n'])
-	.controller('MyCtrl', function(l10n){
+	.controller('MyCtrl', function($scope, l10n){
+		$scope.l10n = l10n
 	});
 </script>
 </body>
