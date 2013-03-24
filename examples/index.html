@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html ng-app="MyApp">
+<head>
+	<title>L10n demo</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.min.js"></script>
+	<script src="../build/l10n-with-tools.js"></script>
+</head>
+<body>
+<div ng-controller="MyCtrl">
+	<ul>
+		<li l10n-text="text"></li>
+		<li l10n-html="html"></li>
+		<li l10n-title="title">Mouse over here to see localized title</li>
+		<li><input type="text" l10n-placeholder="placeholder"/></li>
+		<li><a l10n-href="href">This link has localized href</a></li>
+	</ul>
+</div>
+
+<script>
+	angular.module('my-l10n', ['l10n']).config(['l10nProvider', function(l10n){
+	  l10n.add({
+		text: 'This line is inserted using l10n-text directive',
+		html: 'This line is inserted using l10n-html directive. And it has <b><i>HTML markup</i></b>',
+		title: 'This title is inserted using l10n-title directive',
+		placeholder: 'This placeholder is inserted using l10n-placeholder directive',
+		href: 'http://en.example.com/Localized link'
+	  });
+	}]);
+
+	angular.module('MyApp', ['l10n', 'l10n-tools', 'my-l10n'])
+	.controller('MyCtrl', function(l10n){
+	});
+</script>
+</body>
+</html>
