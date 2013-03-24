@@ -1,0 +1,1 @@
+L10n module for Angular.js
