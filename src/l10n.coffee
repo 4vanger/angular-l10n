@@ -6,19 +6,23 @@ angular.module('l10n', []).provider('l10n',
 			key = '.' + key if key == 'get'
 			@db[key] = value
 	$get: () ->
-#		console.log($ParseProvider)
 		@db.get = (key, substitutions...) ->
 			# protection against method redefine
 			key = '.' + key if  key == 'get'
 			value = @[key]
 			return key unless value?
+
 			# expand @referenced values
-			value = @[value.substr(1)] while value.charAt(0) == '@'
-			value = value.substr(1) if value.length >= 2 && value.charAt(0) == '\\' and value.charAt(1) == '@'
+			while value.charAt(0) == '@' && typeof @[value.substr(1)] != 'undefined'
+				value = @[value.substr(1)]
+
+			# if @ symbol is escaped - display it as is
+			value = value.substr(1) if value.length >= 2 && value.charAt(0) == '\\' && value.charAt(1) == '@'
 
 			# replace %1, %2 etc with corresponding argument
-			for index in [1..substitutions.length]
-				value.replace(new RegExp('%' + index, 'g'), substitutions[index - 1])
+			`for(var ii = 0; ii < substitutions.length; ii++){
+				value = value.replace(new RegExp('%' + (ii + 1) + '([^\\d]|$)', 'g'), substitutions[ii]+ '$1')
+			}`
 
 			value
 

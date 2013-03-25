@@ -1,18 +1,47 @@
 (function() {
-  var module;
+  var getValue, module;
+
+  getValue = function(scope, l10n, value, setValueFn) {
+    var args, l10nValue;
+
+    if (l10n != null) {
+      args = value.split(':');
+      for(var ii = 1; ii < args.length; ii++){
+			try {
+				expr = args[ii]
+				args[ii] = scope.$eval(expr) || '';
+				+function(ii){
+					// Update arguments
+					scope.$watch(expr, function(val){
+						args[ii] = val || '';
+						l10nValue = l10n.get.apply(l10n, args);
+						if(l10nValue != null){
+							value = l10nValue;
+						}
+						setValueFn(value)
+					});
+				}(ii)
+			} catch (error){
+				console.log(error)
+				args[ii] = ''
+			}
+		};
+      l10nValue = l10n.get.apply(l10n, args);
+      if (l10nValue != null) {
+        value = l10nValue;
+      }
+    }
+    return setValueFn(value);
+  };
 
   module = angular.module('l10n-tools', ['l10n']).directive('l10nHtml', [
     'l10n', function(l10n) {
       return {
         restrict: 'A',
         link: function(scope, el, attrs) {
-          var value;
-
-          value = attrs['l10nHtml'];
-          if (l10n != null) {
-            value = l10n.get(value);
-          }
-          return el.html(value);
+          return getValue(scope, l10n, attrs['l10nHtml'], function(value) {
+            return el.html(value);
+          });
         }
       };
     }
@@ -21,13 +50,9 @@
       return {
         restrict: 'A',
         link: function(scope, el, attrs) {
-          var value;
-
-          value = attrs['l10nText'];
-          if (l10n != null) {
-            value = l10n.get(value);
-          }
-          return el.text(value);
+          return getValue(scope, l10n, attrs['l10nText'], function(value) {
+            return el.text(value);
+          });
         }
       };
     }
@@ -42,13 +67,9 @@
         return {
           restrict: 'A',
           link: function(scope, el, attrs) {
-            var value;
-
-            value = attrs[directive];
-            if (l10n != null) {
-              value = l10n.get(value);
-            }
-            return el.attr(attr, value);
+            return getValue(scope, l10n, attrs[directive], function(value) {
+              return el.attr(attr, value);
+            });
           }
         };
       }
