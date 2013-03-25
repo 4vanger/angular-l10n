@@ -22,7 +22,7 @@
 	<p>Assign l10n service to some variable is a scope and then use service as a regular hash.</p>
 	<p class="text-warning">Inserting variable using interpolation creates a binding. Having too many bindings may slow down your application. Try to use directives instead.</p>
 	<ul>
-		<li>{ {l10n.interpolation.interpolation}}: {{l10n['interpolation.interpolation']}}</li>
+		<li>{ {l10n.interpolation.interpolation}}: {{l10n.interpolation.interpolation}}</li>
 		<li>{ {l10n.get('interpolation.usingGet')}}: {{l10n.get('interpolation.usingGet')}}</li>
 	</ul>
 	<h1>Translate once</h1>
@@ -40,16 +40,16 @@
 		<li><span l10n-text="subs.hello:firstName"></span></li>
 		<li><span l10n-text="subs.hello2:firstName:'Miško'"></span></li>
 		<li>
-			Second name: <input type="text" ng-model="secondName"/>
+			<input type="text" ng-model="secondName"/>
 			<span l10n-text="subs.hello2:firstName:secondName"></span>
 		</li>
 	</ul>
 	<h1>Not only strings</h1>
 	<p>You could assign Javascript types as resource value</p>
 	<ul>
-		<li>l10n['objects.monthsArr'][(new Date()).getMonth()]: {{currentMonth}}</li>
+		<li>l10n.objects.monthsArr[(new Date()).getMonth()]: {{currentMonth}}</li>
 		<li>
-			&lt;ng-pluralize when="l10n['objects.pluralizeParams']"&gt;
+			&lt;ng-pluralize when="l10n.objects.pluralizeParams"&gt;
 			<input type="number" ng-model="personCount" class="input-mini"/>
 			<ng-pluralize count="personCount" when="l10n.objects.pluralizeParams"></ng-pluralize>
 		</li>
