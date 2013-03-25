@@ -16,7 +16,7 @@
 		<li>l10n-html="directive.html": <span l10n-html="directive.html"></span></li>
 		<li l10n-title="directive.title">l10n-title="directive.title": Mouse over here to see localized title</li>
 		<li>l10n-placeholder="directive.placeholder": <input type="text" l10n-placeholder="directive.placeholder" class="span4"></li>
-		<li><a l10n-href="directive.href">l10n-href="directive.href": This link has localized href</a></li>
+		<li>l10n-href="directive.href": <a l10n-href="directive.href">This link has localized href</a></li>
 	</ul>
 	<h2>Using interpolation</h2>
 	<p>Assign l10n service to some variable is a scope and then use service as a regular hash.</p>
@@ -44,27 +44,50 @@
 			<span l10n-text="subs.hello2:firstName:secondName"></span>
 		</li>
 	</ul>
+	<h1>Not only strings</h1>
+	<p>You could assign Javascript types as resource value</p>
+	<ul>
+		<li>l10n['objects.monthsArr'][(new Date()).getMonth()]: {{currentMonth}}</li>
+		<li>
+			&lt;ng-pluralize when="l10n['objects.pluralizeParams']"&gt;
+			<input type="number" ng-model="personCount" class="input-mini"/>
+			<ng-pluralize count="personCount" when="l10n.objects.pluralizeParams"></ng-pluralize>
+		</li>
+	</ul>
 </div>
 
 <script>
 	angular.module('my-l10n', ['l10n']).config(['l10nProvider', function(l10n){
 	  l10n.add({
-		'directive.text': 'This line is inserted using l10n-text directive',
-		'directive.html': 'This line is inserted using l10n-html directive. And it has <b><i>HTML markup</i></b>',
-		'directive.title': 'This title is inserted using l10n-title directive',
-		'directive.placeholder': 'This placeholder is inserted using l10n-placeholder directive',
-		'directive.href': 'http://en.example.com/Localized link',
-
-		'interpolation.interpolation': 'This message is inserted through interpolation using object property.',
-		'interpolation.usingGet': 'This message is inserted through interpolation using .get() method.',
-
-		'references.originalMessage': 'This is message from "originalMessage" resource',
-		'references.referencedMessage': '@references.originalMessage',
-		'references.referencedReferencedMessage': '@references.referencedMessage',
-		'references.escapedMessage': '\\@angularjs is nice twitter to follow',
-
-		'subs.hello': 'Hello, %1',
-		'subs.hello2': 'Hello, %1 and %2'
+		directive: {
+			text: 'This line is inserted using l10n-text directive',
+			html: 'This line is inserted using l10n-html directive. And it has <b><i>HTML markup</i></b>',
+			title: 'This title is inserted using l10n-title directive',
+			placeholder: 'This placeholder is inserted using l10n-placeholder directive',
+			href: 'http://en.example.com/Localized link',
+		},
+		interpolation: {
+			interpolation: 'This message is inserted through interpolation using object property.',
+			usingGet: 'This message is inserted through interpolation using .get() method.'
+		},
+		references: {
+			originalMessage: 'This is message from "originalMessage" resource',
+			referencedMessage: '@references.originalMessage',
+			referencedReferencedMessage: '@references.referencedMessage',
+			escapedMessage: '\\@angularjs is nice twitter to follow'
+		},
+		subs: {
+			hello: 'Hello, %1',
+			hello2: 'Hello, %1 and %2'
+		},
+		objects: {
+			monthsArr: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+			pluralizeParams: {
+				'0': 'Nobody is viewing.',
+				'one': '1 person is viewing.',
+				'other': '{} people are viewing.'
+			}
+		}
 	  });
 	}]);
 
@@ -73,6 +96,8 @@
 		$scope.l10n = l10n;
 		$scope.firstName = 'Andrew';
 		$scope.secondName = 'Miško';
+		$scope.personCount = 0;
+		$scope.currentMonth = l10n.objects.monthsArr[(new Date()).getMonth()]
 	});
 </script>
 </body>
