@@ -3,7 +3,7 @@
 <head>
 	<title>L10n demo</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.min.js"></script>
-	<script src="https://raw.github.com/4vanger/angular-l10n/master/build/l10n-with-tools.min.js"></script>
+	<script src="build/l10n-with-tools.min.js"></script>
 	<link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
 </head>
 <body>
@@ -12,48 +12,67 @@
 	<h2>Using directives</h2>
 	<p>Just use any of l10n-text, l10n-html, l10n-placeholder, l10n-href, l10n-title directives.</p>
 	<ul>
-		<li l10n-text="text"></li>
-		<li l10n-html="html"></li>
-		<li l10n-title="title">Mouse over here to see localized title</li>
-		<li><input type="text" l10n-placeholder="placeholder" class="span4"></li>
-		<li><a l10n-href="href">This link has localized href</a></li>
+		<li>l10n-text="directive.text": <span l10n-text="directive.text"></span></li>
+		<li>l10n-html="directive.html": <span l10n-html="directive.html"></span></li>
+		<li l10n-title="directive.title">l10n-title="directive.title": Mouse over here to see localized title</li>
+		<li>l10n-placeholder="directive.placeholder": <input type="text" l10n-placeholder="directive.placeholder" class="span4"></li>
+		<li><a l10n-href="directive.href">l10n-href="directive.href": This link has localized href</a></li>
 	</ul>
 	<h2>Using interpolation</h2>
 	<p>Assign l10n service to some variable is a scope and then use service as a regular hash.</p>
 	<p class="text-warning">Inserting variable using interpolation creates a binding. Having too many bindings may slow down your application. Try to use directives instead.</p>
 	<ul>
-		<li>{{l10n.interpolation}}</li>
-		<li>{{l10n.get('usingGet')}}</li>
+		<li>{ {l10n.interpolation.interpolation}}: {{l10n['interpolation.interpolation']}}</li>
+		<li>{ {l10n.get('interpolation.usingGet')}}: {{l10n.get('interpolation.usingGet')}}</li>
 	</ul>
 	<h1>Translate once</h1>
 	<p>If you have multiple entries for the same phrase within your application - move it into one generic resource and reference it using "@" sign from other resources. When translating to different language you will need to translate only one phrase.</p>
+	<p>For example have generic.ok=Ok message and then reference it from very of hundreds of dialog windows and forms you have in your app. It is a good practice to have every component message resources prefixed with unique string.</p>
 	<ul>
-		<li l10n-text="referencedMessage"></li>
-		<li l10n-text="referencedReferencedMessage"></li>
+		<li>l10n-text="references.referencedMessage": <span l10n-text="references.referencedMessage"></span></li>
+		<li>l10n-text="references.referencedReferencedMessage": <span l10n-text="references.referencedReferencedMessage"></span></li>
+		<li>l10n-text="references.escapedMessage": <span l10n-text="references.escapedMessage"></span></li>
+	</ul>
+	<h1>Substitutions</h1>
+	<p>Put links like %1, %2 etc into your message resource and then specify values when inserting template, adding them after message key separated by ":". See example code below for details</p>
+	<p class="text-warning">$watch is applied for every substituted parameter to update string when parameter changes.</p>
+	<ul>
+		<li><span l10n-text="subs.hello:firstName"></span></li>
+		<li><span l10n-text="subs.hello2:firstName:'Miško'"></span></li>
+		<li>
+			Second name: <input type="text" ng-model="secondName"/>
+			<span l10n-text="subs.hello2:firstName:secondName"></span>
+		</li>
 	</ul>
 </div>
 
 <script>
 	angular.module('my-l10n', ['l10n']).config(['l10nProvider', function(l10n){
 	  l10n.add({
-		text: 'This line is inserted using l10n-text directive',
-		html: 'This line is inserted using l10n-html directive. And it has <b><i>HTML markup</i></b>',
-		title: 'This title is inserted using l10n-title directive',
-		placeholder: 'This placeholder is inserted using l10n-placeholder directive',
-		href: 'http://en.example.com/Localized link',
+		'directive.text': 'This line is inserted using l10n-text directive',
+		'directive.html': 'This line is inserted using l10n-html directive. And it has <b><i>HTML markup</i></b>',
+		'directive.title': 'This title is inserted using l10n-title directive',
+		'directive.placeholder': 'This placeholder is inserted using l10n-placeholder directive',
+		'directive.href': 'http://en.example.com/Localized link',
 
-		interpolation: 'This message is inserted through interpolation using object property.',
-		usingGet: 'This message is inserted through interpolation using .get() method.',
+		'interpolation.interpolation': 'This message is inserted through interpolation using object property.',
+		'interpolation.usingGet': 'This message is inserted through interpolation using .get() method.',
 
-		originalMessage: 'This is message from "originalMessage" resource',
-		referencedMessage: '@originalMessage',
-		referencedReferencedMessage: '@referencedMessage'
+		'references.originalMessage': 'This is message from "originalMessage" resource',
+		'references.referencedMessage': '@references.originalMessage',
+		'references.referencedReferencedMessage': '@references.referencedMessage',
+		'references.escapedMessage': '\\@angularjs is nice twitter to follow',
+
+		'subs.hello': 'Hello, %1',
+		'subs.hello2': 'Hello, %1 and %2'
 	  });
 	}]);
 
 	angular.module('MyApp', ['l10n', 'l10n-tools', 'my-l10n'])
 	.controller('MyCtrl', function($scope, l10n){
-		$scope.l10n = l10n
+		$scope.l10n = l10n;
+		$scope.firstName = 'Andrew';
+		$scope.secondName = 'Miško';
 	});
 </script>
 </body>
