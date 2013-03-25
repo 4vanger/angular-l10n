@@ -8,11 +8,13 @@
       args = value.split(':');
       for(var ii = 1; ii < args.length; ii++){
 			try {
-				expr = args[ii]
+				var expr = args[ii]
 				args[ii] = scope.$eval(expr) || '';
+				// create closure to protect index value
 				+function(ii){
-					// Update arguments
+					// when expression changes - recalculate message
 					scope.$watch(expr, function(val){
+						// update arguments list
 						args[ii] = val || '';
 						l10nValue = l10n.get.apply(l10n, args);
 						if(l10nValue != null){
@@ -22,7 +24,6 @@
 					});
 				}(ii)
 			} catch (error){
-				console.log(error)
 				args[ii] = ''
 			}
 		};

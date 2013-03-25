@@ -4,32 +4,40 @@
   angular.module('l10n', []).provider('l10n', {
     db: {},
     add: function(values) {
-      var key, value, _results;
-
-      _results = [];
-      for (key in values) {
-        value = values[key];
-        if (key === 'get') {
-          key = '.' + key;
-        }
-        _results.push(this.db[key] = value);
+      if (typeof values['get'] !== 'undefined') {
+        values.$get = values.get;
+        delete values.get;
       }
-      return _results;
+      return angular.extend(this.db, values);
     },
     $get: function() {
       this.db.get = function() {
-        var key, substitutions, value;
+        var key, newValue, originalKey, parent, rest, substitutions, value, _ref;
 
         key = arguments[0], substitutions = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+        originalKey = key;
         if (key === 'get') {
-          key = '.' + key;
+          key = '$' + key;
         }
-        value = this[key];
+        parent = this;
+        while (key.indexOf('.') > 0) {
+          _ref = key.split('.', 2), key = _ref[0], rest = _ref[1];
+          if (typeof parent[key] !== 'undefined') {
+            parent = parent[key];
+          } else {
+            return originalKey;
+          }
+          key = rest;
+        }
+        value = parent[key];
         if (value == null) {
-          return key;
+          return originalKey;
         }
-        while (value.charAt(0) === '@' && typeof this[value.substr(1)] !== 'undefined') {
-          value = this[value.substr(1)];
+        while (value.charAt(0) === '@') {
+          newValue = this.get(value.substr(1));
+          if (typeof newValue !== 'undefined') {
+            value = newValue;
+          }
         }
         if (value.length >= 2 && value.charAt(0) === '\\' && value.charAt(1) === '@') {
           value = value.substr(1);
@@ -55,11 +63,13 @@
       args = value.split(':');
       for(var ii = 1; ii < args.length; ii++){
 			try {
-				expr = args[ii]
+				var expr = args[ii]
 				args[ii] = scope.$eval(expr) || '';
+				// create closure to protect index value
 				+function(ii){
-					// Update arguments
+					// when expression changes - recalculate message
 					scope.$watch(expr, function(val){
+						// update arguments list
 						args[ii] = val || '';
 						l10nValue = l10n.get.apply(l10n, args);
 						if(l10nValue != null){
@@ -69,7 +79,6 @@
 					});
 				}(ii)
 			} catch (error){
-				console.log(error)
 				args[ii] = ''
 			}
 		};

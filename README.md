@@ -12,7 +12,9 @@ en.js
 ```javascript
 angular.module('my-l10n', ['l10n']).config(['l10nProvider', function(l10n){
 	l10n.add({
-		myString: 'This is my string in English'
+		myPage: {
+			myString: 'This is my string in English'
+		}
 	});
 }])
 ```
@@ -21,7 +23,9 @@ ru.js
 ```javascript
 angular.module('my-l10n', ['l10n']).config(['l10nProvider', function(l10n){
 	l10n.add({
-		myString: 'Моя строчка на русском'
+		myPage: {
+			myString: 'Моя строчка на русском'
+		}
 	});
 }]
 ```
@@ -35,7 +39,7 @@ angular.module('MyApp', ['l10n', 'my-l10n']);
 ## Usage
 ### As a service
 angular.module('MyApp').controller('MyCtrl', function(l10n){
-	l10n.get('myString')
+	l10n.get('myPage.myString')
 })
 ### As a directive
 First you need to add l10n-tools as you module requirment
@@ -47,4 +51,4 @@ then you will get following attribute directives:
 * l10n-text - set localized value as element text content
 * l10n-title, l10n-href, l10n-placeholder - set localized value as corresponding attribute value
 
-Within a message you could reference another message using "@" sign.
+[See demo](http://4vanger.github.com/angular-l10n/) for more features and examples of usage.
