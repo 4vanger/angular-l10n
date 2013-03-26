@@ -2,37 +2,37 @@
   var getValue, module;
 
   getValue = function(scope, l10n, value, setValueFn) {
-    var args, l10nValue;
+    var args, setValue;
 
-    if (l10n != null) {
-      args = value.split(':');
-      for(var ii = 1; ii < args.length; ii++){
-			try {
-				var expr = args[ii]
-				args[ii] = scope.$eval(expr) || '';
-				// create closure to protect index value
-				+function(ii){
-					// when expression changes - recalculate message
-					scope.$watch(expr, function(val){
-						// update arguments list
-						args[ii] = val || '';
-						l10nValue = l10n.get.apply(l10n, args);
-						if(l10nValue != null){
-							value = l10nValue;
-						}
-						setValueFn(value)
-					});
-				}(ii)
-			} catch (error){
-				args[ii] = ''
-			}
-		};
+    args = value.split(':');
+    setValue = function() {
+      var l10nValue;
+
       l10nValue = l10n.get.apply(l10n, args);
-      if (l10nValue != null) {
+      if (l10nValue !== null) {
         value = l10nValue;
       }
-    }
-    return setValueFn(value);
+      return setValueFn(value);
+    };
+    for(var ii = 1; ii < args.length; ii++){
+		try {
+			var expr = args[ii]
+			args[ii] = scope.$eval(expr) || '';
+			// create closure to protect index value
+			+function(ii){
+				// when expression changes - recalculate message
+				scope.$watch(expr, function(val){
+					// update arguments list
+					args[ii] = val || '';
+					setValue();
+				});
+			}(ii)
+		} catch (error){
+			args[ii] = ''
+		}
+	};
+    scope.$on('l10n-locale', setValue);
+    return setValue();
   };
 
   module = angular.module('l10n-tools', ['l10n']).directive('l10nHtml', [
@@ -59,7 +59,7 @@
     }
   ]);
 
-  angular.forEach(['title', 'placeholder', 'href'], function(attr) {
+  angular.forEach(['title', 'placeholder', 'href', 'value'], function(attr) {
     var directive;
 
     directive = 'l10n' + attr.charAt(0).toUpperCase() + attr.substr(1);

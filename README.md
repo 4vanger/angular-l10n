@@ -10,8 +10,8 @@ angular.module('MyApp', ['l10n']);
 
 en.js
 ```javascript
-angular.module('my-l10n', ['l10n']).config(['l10nProvider', function(l10n){
-	l10n.add({
+angular.module('my-l10n-en', ['l10n']).config(['l10nProvider', function(l10n){
+	l10n.add('en', {
 		myPage: {
 			myString: 'This is my string in English'
 		}
@@ -21,8 +21,8 @@ angular.module('my-l10n', ['l10n']).config(['l10nProvider', function(l10n){
 
 ru.js
 ```javascript
-angular.module('my-l10n', ['l10n']).config(['l10nProvider', function(l10n){
-	l10n.add({
+angular.module('my-l10n-ru', ['l10n']).config(['l10nProvider', function(l10n){
+	l10n.add('ru', {
 		myPage: {
 			myString: 'Моя строчка на русском'
 		}
@@ -32,7 +32,7 @@ angular.module('my-l10n', ['l10n']).config(['l10nProvider', function(l10n){
 
 Then add it into your module requires:
 ```javascript
-angular.module('MyApp', ['l10n', 'my-l10n']);
+angular.module('MyApp', ['l10n', 'my-l10n-en']);
 ```
 
 

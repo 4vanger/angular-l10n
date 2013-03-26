@@ -3,52 +3,91 @@
 
   angular.module('l10n', []).provider('l10n', {
     db: {},
-    add: function(values) {
-      if (typeof values['get'] !== 'undefined') {
-        values.$get = values.get;
-        delete values.get;
-      }
-      return angular.extend(this.db, values);
-    },
-    $get: function() {
-      this.db.get = function() {
-        var key, newValue, originalKey, parent, rest, substitutions, value, _ref;
+    localeMessages: {},
+    locale: null,
+    add: function(locale, values) {
+      var key, _i, _len;
 
-        key = arguments[0], substitutions = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-        originalKey = key;
-        if (key === 'get') {
-          key = '$' + key;
+      for (_i = 0, _len = values.length; _i < _len; _i++) {
+        key = values[_i];
+        if (angular.isFunction(this.db[method])) {
+          values['$' + key] = values[key];
+          delete values[key];
         }
-        parent = this;
-        while (key.indexOf('.') > 0) {
-          _ref = key.split('.', 2), key = _ref[0], rest = _ref[1];
-          if (typeof parent[key] !== 'undefined') {
-            parent = parent[key];
-          } else {
+      }
+      if (typeof this.localeMessages[locale] === 'undefined') {
+        this.localeMessages[locale] = {};
+      }
+      angular.extend(this.localeMessages[locale], values);
+      if (!locale) {
+        return this.setLocale(locale);
+      }
+    },
+    setLocale: function(locale) {
+      var key, value, _ref;
+
+      _ref = this.db;
+      for (key in _ref) {
+        value = _ref[key];
+        if (!angular.isFunction(this.db[key])) {
+          delete this.db[key];
+        }
+      }
+      this.locale = locale;
+      return angular.extend(this.db, this.localeMessages[this.locale]);
+    },
+    $get: [
+      '$rootScope', function(rootScope) {
+        var _this = this;
+
+        this.db.setLocale = function(locale) {
+          _this.setLocale(locale);
+          return rootScope.$broadcast('l10n-locale', locale);
+        };
+        this.db.getLocale = function() {
+          return _this.locale;
+        };
+        this.db.get = function() {
+          var key, newValue, originalKey, parent, rest, substitutions, value, _ref;
+
+          key = arguments[0], substitutions = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+          originalKey = key;
+          if (angular.isFunction(this[key])) {
+            key = '$' + key;
+          }
+          parent = this;
+          while (key.indexOf('.') > 0) {
+            _ref = key.split('.', 2), key = _ref[0], rest = _ref[1];
+            if (typeof parent[key] !== 'undefined') {
+              parent = parent[key];
+            } else {
+              return originalKey;
+            }
+            key = rest;
+          }
+          value = parent[key];
+          if (value == null) {
             return originalKey;
           }
-          key = rest;
-        }
-        value = parent[key];
-        if (value == null) {
-          return originalKey;
-        }
-        while (value.charAt(0) === '@') {
-          newValue = this.get(value.substr(1));
-          if (typeof newValue !== 'undefined') {
-            value = newValue;
+          if (typeof value === 'string') {
+            while (value.charAt(0) === '@') {
+              newValue = this.get(value.substr(1));
+              if (typeof newValue !== 'undefined') {
+                value = newValue;
+              }
+            }
+            if (value.length >= 2 && value.charAt(0) === '\\' && value.charAt(1) === '@') {
+              value = value.substr(1);
+            }
+            for(var ii = 0; ii < substitutions.length; ii++){
+					value = value.replace(new RegExp('%' + (ii + 1) + '([^\\d]|$)', 'g'), substitutions[ii]+ '$1')
+				};
           }
-        }
-        if (value.length >= 2 && value.charAt(0) === '\\' && value.charAt(1) === '@') {
-          value = value.substr(1);
-        }
-        for(var ii = 0; ii < substitutions.length; ii++){
-				value = value.replace(new RegExp('%' + (ii + 1) + '([^\\d]|$)', 'g'), substitutions[ii]+ '$1')
-			};
-        return value;
-      };
-      return this.db;
-    }
+          return value;
+        };
+        return this.db;
+      }
+    ]
   });
 
 }).call(this);
@@ -57,37 +96,37 @@
   var getValue, module;
 
   getValue = function(scope, l10n, value, setValueFn) {
-    var args, l10nValue;
+    var args, setValue;
 
-    if (l10n != null) {
-      args = value.split(':');
-      for(var ii = 1; ii < args.length; ii++){
-			try {
-				var expr = args[ii]
-				args[ii] = scope.$eval(expr) || '';
-				// create closure to protect index value
-				+function(ii){
-					// when expression changes - recalculate message
-					scope.$watch(expr, function(val){
-						// update arguments list
-						args[ii] = val || '';
-						l10nValue = l10n.get.apply(l10n, args);
-						if(l10nValue != null){
-							value = l10nValue;
-						}
-						setValueFn(value)
-					});
-				}(ii)
-			} catch (error){
-				args[ii] = ''
-			}
-		};
+    args = value.split(':');
+    setValue = function() {
+      var l10nValue;
+
       l10nValue = l10n.get.apply(l10n, args);
-      if (l10nValue != null) {
+      if (l10nValue !== null) {
         value = l10nValue;
       }
-    }
-    return setValueFn(value);
+      return setValueFn(value);
+    };
+    for(var ii = 1; ii < args.length; ii++){
+		try {
+			var expr = args[ii]
+			args[ii] = scope.$eval(expr) || '';
+			// create closure to protect index value
+			+function(ii){
+				// when expression changes - recalculate message
+				scope.$watch(expr, function(val){
+					// update arguments list
+					args[ii] = val || '';
+					setValue();
+				});
+			}(ii)
+		} catch (error){
+			args[ii] = ''
+		}
+	};
+    scope.$on('l10n-locale', setValue);
+    return setValue();
   };
 
   module = angular.module('l10n-tools', ['l10n']).directive('l10nHtml', [
@@ -114,7 +153,7 @@
     }
   ]);
 
-  angular.forEach(['title', 'placeholder', 'href'], function(attr) {
+  angular.forEach(['title', 'placeholder', 'href', 'value'], function(attr) {
     var directive;
 
     directive = 'l10n' + attr.charAt(0).toUpperCase() + attr.substr(1);
