@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html ng-app="MyApp">
 <head>
@@ -8,96 +9,192 @@
 </head>
 <body>
 <div ng-controller="MyCtrl" class="container">
-	<h1>Get message resources</h1>
-	<h2>Using directives</h2>
-	<p>Just use any of l10n-text, l10n-html, l10n-placeholder, l10n-href, l10n-title directives.</p>
+	<h1 l10n-text="document.title"></h1>
+	<h2 l10n-text="directive.title"></h2>
+	<p l10n-text="directive.text"></p>
 	<ul>
-		<li>l10n-text="directive.text": <span l10n-text="directive.text"></span></li>
-		<li>l10n-html="directive.html": <span l10n-html="directive.html"></span></li>
-		<li l10n-title="directive.title">l10n-title="directive.title": Mouse over here to see localized title</li>
-		<li>l10n-placeholder="directive.placeholder": <input type="text" l10n-placeholder="directive.placeholder" class="span4"></li>
-		<li>l10n-href="directive.href": <a l10n-href="directive.href">This link has localized href</a></li>
+		<li>l10n-text="directive.dirText": <span l10n-text="directive.dirText"></span></li>
+		<li>l10n-html="directive.dirHtml": <span l10n-html="directive.dirHtml"></span></li>
+		<li l10n-title="directive.dirTitle">l10n-title="directive.dirTitle": <span l10n-text="directive.dirTitleComment"></span></li>
+		<li>l10n-placeholder="directive.dirPlaceholder": <input type="text" l10n-placeholder="directive.dirPlaceholder" class="span4"></li>
+		<li>l10n-href="directive.dirHref": <a l10n-href="directive.dirHref" l10n-text="directive.dirHrefComment"></a></li>
+		<li>l10n-value="directive.dirValue": <input class="btn span4" type="text" l10n-value="directive.dirValue"/></li>
 	</ul>
-	<h2>Using interpolation</h2>
-	<p>Assign l10n service to some variable is a scope and then use service as a regular hash.</p>
-	<p class="text-warning">Inserting variable using interpolation creates a binding. Having too many bindings may slow down your application. Try to use directives instead.</p>
+	<h2 l10n-text="interpolation.title"></h2>
+	<p l10n-text="interpolation.text"></p>
 	<ul>
 		<li>{ {l10n.interpolation.interpolation}}: {{l10n.interpolation.interpolation}}</li>
 		<li>{ {l10n.get('interpolation.usingGet')}}: {{l10n.get('interpolation.usingGet')}}</li>
 	</ul>
-	<h1>Translate once</h1>
-	<p>If you have multiple entries for the same phrase within your application - move it into one generic resource and reference it using "@" sign from other resources. When translating to different language you will need to translate only one phrase.</p>
-	<p>For example have generic.ok=Ok message and then reference it from very of hundreds of dialog windows and forms you have in your app. It is a good practice to have every component message resources prefixed with unique string.</p>
+	<h1 l10n-text="references.title"></h1>
+	<p l10n-text="references.text"></p>
+	<p l10n-text="references.text2"></p>
 	<ul>
 		<li>l10n-text="references.referencedMessage": <span l10n-text="references.referencedMessage"></span></li>
 		<li>l10n-text="references.referencedReferencedMessage": <span l10n-text="references.referencedReferencedMessage"></span></li>
 		<li>l10n-text="references.escapedMessage": <span l10n-text="references.escapedMessage"></span></li>
 	</ul>
-	<h1>Substitutions</h1>
-	<p>Put links like %1, %2 etc into your message resource and then specify values when inserting template, adding them after message key separated by ":". See example code below for details</p>
-	<p class="text-warning">$watch is applied for every substituted parameter to update string when parameter changes.</p>
+	<h1 l10n-text="subs.title"></h1>
+	<p l10n-text="subs.text"></p>
 	<ul>
 		<li><span l10n-text="subs.hello:firstName"></span></li>
-		<li><span l10n-text="subs.hello2:firstName:'Miško'"></span></li>
+		<li>{{l10n.get('subs.hello2', firstName, 'Miško')}}</li>
 		<li>
 			<input type="text" ng-model="secondName"/>
 			<span l10n-text="subs.hello2:firstName:secondName"></span>
 		</li>
 	</ul>
-	<h1>Not only strings</h1>
-	<p>You could assign Javascript types as resource value</p>
+	<h1 l10n-text="objects.title"></h1>
+	<p l10n-text="objects.text"></p>
+	<p l10n-text="objects.warning" class="text-warning"></p>
 	<ul>
 		<li>l10n.objects.monthsArr[(new Date()).getMonth()]: {{currentMonth}}</li>
 		<li>
 			&lt;ng-pluralize when="l10n.objects.pluralizeParams"&gt;
 			<input type="number" ng-model="personCount" class="input-mini"/>
-			<ng-pluralize count="personCount" when="l10n.objects.pluralizeParams"></ng-pluralize>
+			<ng-pluralize count="personCount" when="l10n.get('objects.pluralizeParams')"></ng-pluralize>
 		</li>
 	</ul>
+	<h1 l10n-text="locale.title"></h1>
+	<p l10n-text="locale.text"></p>
+	<input class="btn" type="button" l10n-value="locale.toggleLocale" ng-click="toggleLocale()"/>
 </div>
 
 <script>
-	angular.module('my-l10n', ['l10n']).config(['l10nProvider', function(l10n){
-	  l10n.add({
+	angular.module('my-l10n-en', ['l10n']).config(['l10nProvider', function(l10n){
+	  l10n.add('en', {
+		document: {
+			title: 'Get message resources'
+		},
 		directive: {
-			text: 'This line is inserted using l10n-text directive',
-			html: 'This line is inserted using l10n-html directive. And it has <b><i>HTML markup</i></b>',
-			title: 'This title is inserted using l10n-title directive',
-			placeholder: 'This placeholder is inserted using l10n-placeholder directive',
-			href: 'http://en.example.com/Localized link',
+			title: 'Using directives',
+			text: 'Just use any of l10n-text, l10n-html, l10n-placeholder, l10n-href, l10n-title directives.',
+			dirText: 'This line is inserted using l10n-text directive',
+			dirHtml: 'This line is inserted using l10n-html directive. And it has <b><i>HTML markup</i></b>',
+			dirTitle: 'This title is inserted using l10n-title directive',
+			dirTitleComment: 'Mouse over here to see localized title',
+			dirPlaceholder: 'This placeholder is inserted using l10n-placeholder directive',
+			dirHref: 'http://en.example.com/Localized link',
+			dirHrefComment: 'This link has localized href',
+			dirValue: 'This line is inserted using l10n-value directive'
 		},
 		interpolation: {
+			title: 'Using interpolation',
+			text: 'Assign l10n service to some variable is a scope and then use service as a regular hash.',
 			interpolation: 'This message is inserted through interpolation using object property.',
 			usingGet: 'This message is inserted through interpolation using .get() method.'
 		},
 		references: {
+			title: 'Translate once',
+			text: 'If you have multiple entries for the same phrase within your application - move it into one generic resource and reference it using "@" sign from other resources. When translating to different language you will need to translate only one phrase.',
+			text2: 'For example have generic.ok=Ok message and then reference it from very of hundreds of dialog windows and forms you have in your app. It is a good practice to have every component message resources prefixed with unique string.',
 			originalMessage: 'This is message from "originalMessage" resource',
 			referencedMessage: '@references.originalMessage',
 			referencedReferencedMessage: '@references.referencedMessage',
 			escapedMessage: '\\@angularjs is nice twitter to follow'
 		},
 		subs: {
+			title: 'Substitutions',
+			text: 'Put links like %1, %2 etc into your message resource and then specify values when inserting template, adding them after message key separated by ":". See example code below for details',
 			hello: 'Hello, %1',
 			hello2: 'Hello, %1 and %2'
 		},
 		objects: {
+			title: 'Not only strings',
+			text: 'You could assign Javascript types as resource value',
+			warning: 'If locale is changed - you need to update your values manually. Listen to $scope.$on("l10n-locale") event',
 			monthsArr: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
 			pluralizeParams: {
 				'0': 'Nobody is viewing.',
 				'one': '1 person is viewing.',
 				'other': '{} people are viewing.'
 			}
+		},
+		locale: {
+			title: 'Changing locale',
+			text: 'Use l10n.setLocale() method to change locale. All message added using directives will be updated automatically. For other messages you need to listen to $scope.$on(\'l10n-locale\') and update them manually',
+			toggleLocale: 'Translate into Russian'
+		}
+	  });
+	}]);
+	angular.module('my-l10n-ru', ['l10n']).config(['l10nProvider', function(l10n){
+	  l10n.add('ru', {
+		document: {
+			title: 'Локализация строковых ресурсов'
+		},
+		directive: {
+			title: 'Используя директивы',
+			text: 'Просто используй любую из следующих директив: l10n-text, l10n-html, l10n-placeholder, l10n-href, l10n-title.',
+			dirText: 'Эта строчка вставлена через директиву l10n-text',
+			dirHtml: 'Эта строчка вставлена через директиву l10n-html. И в ней есть <b><i>HTML!</i></b>',
+			dirTitle: 'Эта строчка вставлена через директиву l10n-title',
+			dirTitleComment: 'Наведи мышку чтобы увидетль локализированную всплывающую подсказку',
+			dirPlaceholder: 'Эта строчка вставлена через директиву l10n-placeholder',
+			dirHref: 'http://ru.example.com/Локализированная строчка',
+			dirHrefComment: 'У этой ссылки локализированный адрес',
+			dirValue: 'Эта строчка вставлена через директиву l10n-value'
+		},
+		interpolation: {
+			title: 'Используя интерполяцию',
+			text: 'Присвой сервис l10n переменной $scope и получай потом ресурсы как из обычного хэша.',
+			interpolation: 'Эта строчка вставлена с помощью интерполяции',
+			usingGet: 'Эта строчка вставлена с помощью интерполяции через метод .get()'
+		},
+		references: {
+			title: 'Переводить меньше',
+			text: 'Если одна и та же фраза встречается несколько раз в различных частях одного приложения - помести её в одно сообщение в ресурсах и ссылайся на неё из других ресурсов используя символ @. При переводе на другой язык вам надо будет перевести только одну фразу',
+			text2: 'Например заведи сообщение generic.ok=ОК и ссылайся на него из сотен диалоговых окон по всему приложению. Хорошей практикой будет давать сообщениям разных компонентов разные префиксы. Таким образом можно быть уверенным, что при изменении одного сообщения - другие части приложения не будут задеты.',
+			originalMessage: 'Это сообщение из ресурса "references.originalMessage"',
+			referencedMessage: '@references.originalMessage',
+			referencedReferencedMessage: '@references.referencedMessage',
+			escapedMessage: '\\@angularjs - хороший твиттер'
+		},
+		subs: {
+			title: 'Замены',
+			text: 'Строки %1, %2 внутри сообщения будут заменены на параметры, переданные из темплейта. Разделяй параметры символом ":".',
+			hello: 'Привет, %1',
+			hello2: 'Привет, %1 и %2'
+		},
+		objects: {
+			title: 'Не только строки',
+			text: 'Кроме строк можно присваивать любые Javascript типы.',
+			warning: 'Если локаль меняется - то надо обновить значения переменных. Слушай событие $scope.$on("l10n-locale")',
+			monthsArr: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+			pluralizeParams: {
+				'0': 'Никто не смотрит.',
+				'1': '1 человек смотрит.',
+				'2': '2 человека смотрит.',
+				'3': '3 человека смотрит.',
+				'4': '4 человека смотрит.',
+				'other': '{} человек смотрит.'
+			}
+		},
+		locale: {
+			title: 'Меняем локаль',
+			text: 'Метод l10n.setLocale() позволяет изменить локаль. Все сообщения, вставленные через директивы, будут изменены автоматически. Для остальных сообщений слушай событие $scope.$on(\'l10n-locale\')',
+			toggleLocale: 'Translate into English'
 		}
 	  });
 	}]);
 
-	angular.module('MyApp', ['l10n', 'l10n-tools', 'my-l10n'])
+	angular.module('MyApp', ['l10n', 'l10n-tools', 'my-l10n-en', 'my-l10n-ru'])
+	.config(function(l10nProvider){
+		// If do not specify locale explicitly - l10n fallback to first loaded locale - in our case this is also "en"
+		l10nProvider.setLocale('en');
+	})
 	.controller('MyCtrl', function($scope, l10n){
 		$scope.l10n = l10n;
 		$scope.firstName = 'Andrew';
 		$scope.secondName = 'Miško';
 		$scope.personCount = 0;
-		$scope.currentMonth = l10n.objects.monthsArr[(new Date()).getMonth()]
+		$scope.currentMonth = l10n.objects.monthsArr[(new Date()).getMonth()];
+		$scope.$on('l10n-locale', function(){
+			$scope.currentMonth = l10n.objects.monthsArr[(new Date()).getMonth()];
+		});
+
+		$scope.toggleLocale = function(){
+			l10n.setLocale(l10n.getLocale() == 'en' ? 'ru' : 'en', $scope);
+		};
 	});
 </script>
 </body>
