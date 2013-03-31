@@ -1,6 +1,6 @@
 # L10n module for Angular.js
 ## [General features demo](http://4vanger.github.com/angular-l10n/) 
-## [Demo of easy transitioning to angular-l10n](http://4vanger.github.com/angular-l10n/)
+## [Demo of easy transitioning to angular-l10n](http://4vanger.github.com/angular-l10n/translation.html)
 ***
 ## Installation
 ```javascript
