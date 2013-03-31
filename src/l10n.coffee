@@ -1,4 +1,5 @@
-angular.module('l10n', []).provider('l10n',
+angular.module('l10n', [])
+.provider('l10n',
 	db: {}
 	localeMessages: {}
 	locale: null
@@ -11,7 +12,7 @@ angular.module('l10n', []).provider('l10n',
 
 		@localeMessages[locale] = {} if typeof @localeMessages[locale] == 'undefined'
 		angular.extend @localeMessages[locale], values
-		@setLocale(locale) unless locale
+		@setLocale(locale) if locale
 
 	setLocale: (locale) ->
 		# clean up DB first
