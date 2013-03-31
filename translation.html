@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html ng-app="MyApp">
+<head>
+	<title>Creating translation using export tool</title>
+	<!--script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.min.js"></script-->
+	<script src="angular.min.js"></script>
+	<script src="https://raw.github.com/4vanger/angular-l10n/master/build/l10n-with-tools.min.js"></script>
+	<script src="https://raw.github.com/4vanger/angular-l10n/master/build/l10n-export.js"></script>
+	<link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+	<style type="text/css">
+		.example {
+			position: relative;
+			border: 1px solid #ddd;
+			-webkit-border-radius: 4px;
+			-moz-border-radius: 4px;
+			border-radius: 4px;
+			padding: 39px 10px 10px;
+		}
+
+		.example:after {
+			content: "Example";
+			position: absolute;
+			top: -1px;
+			left: -1px;
+			padding: 3px 7px;
+			font-size: 12px;
+			font-weight: bold;
+			background-color: #f5f5f5;
+			border: 1px solid #ddd;
+			color: #9da0a4;
+			-webkit-border-radius: 4px 0 4px 0;
+			-moz-border-radius: 4px 0 4px 0;
+			border-radius: 4px 0 4px 0;
+		}
+
+		.navbar iframe {
+			margin-top: 9px;
+		}
+	</style>
+</head>
+<body>
+<div class="navbar">
+	<div class="navbar-inner">
+		<a class="brand" href="https://github.com/4vanger/angular-l10n">angular-l10n - Localization module for Angular.js</a>
+		<ul class="nav">
+			<li><a href="https://github.com/4vanger/angular-l10n">View on Github</a></li>
+			<li><iframe src="http://ghbtns.com/github-btn.html?user=4vanger&repo=angular-l10n&type=watch" allowtransparency="true" frameborder="0" scrolling="0" width="70" height="30"></iframe></li>
+			<li><iframe src="http://ghbtns.com/github-btn.html?user=4vanger&repo=angular-l10n&type=fork" allowtransparency="true" frameborder="0" scrolling="0" width="70" height="30"></iframe></li>
+		</ul>
+	</div>
+</div>
+<div class="container">
+	<h1>An easy way to start using l10n in your project</h1>
+	<p>You have project that is already working and need to localize it to different languages. Don't do that boring copy&pasting from your HTML templates to newly created message resource - let angular-l10n do that for you.</p>
+	<p>Just add l10n directive (like this string is localized already) to every element you need to localize. For example you had:</p>
+		<code>
+			&lt;p&gt;This text should be localized&lt;/p&gt;
+		</code>
+	<p>After you will have</p>
+	<code>
+		&lt;p l10n-text="myApp.shouldBeLocalized"&gt;This text should be localized&lt;/p&gt;
+	</code>
+	<p>Ok, now add <code>&lt;script src="l10n-export.js"&gt;&lt;/script&gt;</code> to your page.</p>
+	<p>Put following code somewhere in your app or setup it as separate route.</p>
+	<pre ng-non-bindable>
+&lt;textarea ng-controller="L10nExportCtrl" rows="20" class="container span12"&gt;
+angular.module('l10n-{{ currentLocale }}', ['l10n']).config(['l10nProvider', function(l10n){
+	l10n.add('{{ currentLocale }}', {{ resources }});
+}]);
+&lt;/textarea&gt;</pre>
+	<p>Help angular-l10n to know more about your message resources. You will need to open each template in a browser. Hope later I will be able to automate this in some way.</p>
+	<p>After this you need to get data out from exporter. Open the page with controller you had setup two steps ago and you will see all the message resources that it found in your templates. Copy it and paste into you message resources</p>
+
+	<div class="example">
+		<p l10n-text="strings.localized"></p>
+		<p l10n-text="myApp.shouldBeLocalized">This text should be localized - so it will be added to missing resources</p>
+		<label for="missing">This resource are missing from localization</label>
+		<textarea ng-controller="L10nExportCtrl" rows="20" class="container span12" id="missing">
+angular.module('l10n-{{ currentLocale }}', ['l10n']).config(['l10nProvider', function(l10n){
+	l10n.add('{{ currentLocale }}', {{ resources }});
+}]);</textarea>
+
+		<script>
+			angular.module('my-l10n-en', ['l10n']).config(['l10nProvider', function (l10n) {
+				l10n.add('en', {
+					strings: {
+						localized: 'This text is localized already so it won\'t appear at missing resources'
+					}
+				});
+			}]);
+
+			angular.module('MyApp', ['l10n', 'l10n-tools', 'l10n-export', 'my-l10n-en']).controller('MyCtrl', function () {
+			});
+		</script>
+	</div>
+</div>
+</body>
+
+</html>
