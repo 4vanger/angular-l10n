@@ -9,8 +9,8 @@ module.exports = (grunt) ->
 			build:
 				files:
 					'build/l10n.js': 'src/l10n.coffee'
+					'tmp/l10n-tools.js': 'src/l10n-tools.coffee'
 					'build/l10n-export.js': 'src/l10n-export.coffee'
-					'build/l10n-tools.js': 'src/l10n-tools.coffee'
 					'build/l10n-with-tools.js': ['src/l10n.coffee', 'src/l10n-tools.coffee']
 		uglify:
 			build:
@@ -22,8 +22,7 @@ module.exports = (grunt) ->
 				}
 				files:
 					'build/l10n.min.js': ['build/l10n.js']
-					'build/l10n-tools.min.js': ['build/l10n-tools.js']
-					'build/l10n-with-tools.min.js': ['build/l10n.js', 'build/l10n-tools.js']
+					'build/l10n-with-tools.min.js': ['build/l10n.js', 'tmp/l10n-tools.js']
 		watch:
 			src:
 				files: [

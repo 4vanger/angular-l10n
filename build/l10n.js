@@ -19,7 +19,7 @@
         this.localeMessages[locale] = {};
       }
       angular.extend(this.localeMessages[locale], values);
-      if (!locale) {
+      if (locale) {
         return this.setLocale(locale);
       }
     },

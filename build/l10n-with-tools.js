@@ -19,7 +19,7 @@
         this.localeMessages[locale] = {};
       }
       angular.extend(this.localeMessages[locale], values);
-      if (!locale) {
+      if (locale) {
         return this.setLocale(locale);
       }
     },
@@ -129,31 +129,9 @@
     return setValue();
   };
 
-  module = angular.module('l10n-tools', ['l10n']).directive('l10nHtml', [
-    'l10n', function(l10n) {
-      return {
-        restrict: 'A',
-        link: function(scope, el, attrs) {
-          return getValue(scope, l10n, attrs['l10nHtml'], function(value) {
-            return el.html(value);
-          });
-        }
-      };
-    }
-  ]).directive('l10nText', [
-    'l10n', function(l10n) {
-      return {
-        restrict: 'A',
-        link: function(scope, el, attrs) {
-          return getValue(scope, l10n, attrs['l10nText'], function(value) {
-            return el.text(value);
-          });
-        }
-      };
-    }
-  ]);
+  module = angular.module('l10n-tools', ['l10n']);
 
-  angular.forEach(['title', 'placeholder', 'href', 'value'], function(attr) {
+  angular.forEach(['text', 'html', 'title', 'placeholder', 'href', 'value'], function(attr) {
     var directive;
 
     directive = 'l10n' + attr.charAt(0).toUpperCase() + attr.substr(1);
@@ -161,10 +139,27 @@
       'l10n', function(l10n) {
         return {
           restrict: 'A',
+          priority: 90,
           link: function(scope, el, attrs) {
-            return getValue(scope, l10n, attrs[directive], function(value) {
-              return el.attr(attr, value);
-            });
+            var fn;
+
+            switch (attr) {
+              case 'html ':
+                fn = function(value) {
+                  return el.html(value);
+                };
+                break;
+              case 'text':
+                fn = function(value) {
+                  return el.text(value);
+                };
+                break;
+              default:
+                fn = fn = function(value) {
+                  return el.attr(attr, value);
+                };
+            }
+            return getValue(scope, l10n, attrs[directive], fn);
           }
         };
       }
