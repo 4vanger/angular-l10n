@@ -42,7 +42,7 @@ angular.forEach ['text', 'html', 'title', 'placeholder', 'href', 'value'], (attr
 	]
 
 module.controller 'L10nExportCtrl', ['$scope', '$filter', 'l10n', (scope, filter, l10n) ->
-	scope.currentLocale = l10n.getLocale()
+	scope.currentLocale = l10n.getLocale() || 'en'
 	strings = for string in filter('json')(resources).split('\n')
 		string = string.replace(/^\s*/g, (match) -> Array(match.length/2 + 2).join('\t'))
 	scope.resources = strings.join('\n')

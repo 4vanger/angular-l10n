@@ -79,7 +79,7 @@
     '$scope', '$filter', 'l10n', function(scope, filter, l10n) {
       var string, strings;
 
-      scope.currentLocale = l10n.getLocale();
+      scope.currentLocale = l10n.getLocale() || 'en';
       strings = (function() {
         var _i, _len, _ref, _results;
 
