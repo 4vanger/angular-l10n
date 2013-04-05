@@ -145,7 +145,7 @@
             var fn;
 
             switch (attr) {
-              case 'html ':
+              case 'html':
                 fn = function(value) {
                   return el.html(value);
                 };

@@ -35,7 +35,7 @@ angular.forEach ['text', 'html', 'title', 'placeholder', 'href', 'value'], (attr
 		priority: 90
 		link: (scope, el, attrs) ->
 			switch attr
-				when 'html ' then fn = (value) -> el.html value
+				when 'html' then fn = (value) -> el.html value
 				when 'text' then fn = (value) -> el.text value
 				else fn = fn = (value) -> el.attr attr, value
 
