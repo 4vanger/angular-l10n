@@ -35,6 +35,14 @@
 		<li>l10n-href="directive.dirHref": <a l10n-href="directive.dirHref" l10n-text="directive.dirHrefComment"></a></li>
 		<li>l10n-value="directive.dirValue": <input class="btn span4" type="text" l10n-value="directive.dirValue"/></li>
 	</ul>
+
+	<h2 l10n-text="filter.title"></h2>
+	<p l10n-text="filter.text"></p>
+	<ul>
+		<li>'filter.hello' | l10n <span>{{'filter.hello' | l10n}}</span></li>
+		<li>'filter.hello2' | l10n:firstName:'Miško' <span>{{'filter.hello2' | l10n:firstName:'Miško'}}</span></li>
+	</ul>
+
 	<h2 l10n-text="interpolation.title"></h2>
 	<p l10n-text="interpolation.text"></p>
 	<ul>
@@ -93,6 +101,12 @@
 			dirHrefComment: 'This link has localized href',
 			dirValue: 'This line is inserted using l10n-value directive'
 		},
+		filter: {
+			title: 'Using filter',
+			text: 'Use "l10n" filter to localize value. Substitute parameters by adding parameters to filter: | l10n:variable:\'string\'',
+			hello: 'Hello, filter',
+			hello2: 'Hello %1 and %2'
+		},
 		interpolation: {
 			title: 'Using interpolation',
 			text: 'Assign l10n service to some variable is a scope and then use service as a regular hash.',
@@ -148,6 +162,12 @@
 			dirHref: 'http://ru.example.com/Локализированная строчка',
 			dirHrefComment: 'У этой ссылки локализированный адрес',
 			dirValue: 'Эта строчка вставлена через директиву l10n-value'
+		},
+		filter: {
+			title: 'Используя фильтры',
+			text: 'Используй "l10n" фильтр чтобы локализировать значение. Подставляй параметры, указывая их в качестве аргументов фильтра: | l10n:variable:\'string\'',
+			hello: 'Привет, фильтр',
+			hello2: 'Привет %1 и %2'
 		},
 		interpolation: {
 			title: 'Используя интерполяцию',
