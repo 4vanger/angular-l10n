@@ -93,7 +93,8 @@
 }).call(this);
 
 (function() {
-  var getValue, module;
+  var getValue, module,
+    __slice = [].slice;
 
   getValue = function(scope, l10n, value, setValueFn) {
     var args, setValue;
@@ -165,5 +166,16 @@
       }
     ]);
   });
+
+  module.filter('l10n', [
+    'l10n', function(l10n) {
+      return function() {
+        var key, subs;
+
+        key = arguments[0], subs = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+        return l10n.get.apply(l10n, arguments);
+      };
+    }
+  ]);
 
 }).call(this);

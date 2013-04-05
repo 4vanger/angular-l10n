@@ -41,3 +41,8 @@ angular.forEach ['text', 'html', 'title', 'placeholder', 'href', 'value'], (attr
 
 			getValue scope, l10n, attrs[directive], fn
 	]
+
+module.filter 'l10n', ['l10n', (l10n) ->
+	(key, subs...) ->
+		l10n.get.apply(l10n, arguments)
+]
