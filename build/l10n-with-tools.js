@@ -48,7 +48,7 @@
           return _this.locale;
         };
         this.db.get = function() {
-          var key, newValue, originalKey, parent, rest, substitutions, value, _ref;
+          var key, newValue, originalKey, parent, pos, rest, substitutions, value;
 
           key = arguments[0], substitutions = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
           originalKey = key;
@@ -56,8 +56,9 @@
             key = '$' + key;
           }
           parent = this;
-          while (key.indexOf('.') > 0) {
-            _ref = key.split('.', 2), key = _ref[0], rest = _ref[1];
+          while ((pos = key.indexOf('.')) > 0) {
+            rest = key.substr(pos + 1);
+            key = key.substr(0, pos);
             if (typeof parent[key] !== 'undefined') {
               parent = parent[key];
             } else {

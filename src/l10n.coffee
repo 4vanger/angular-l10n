@@ -35,8 +35,10 @@ angular.module('l10n', [])
 			key = '$' + key if angular.isFunction @[key]
 			parent = @
 			# get value from hash
-			while key.indexOf('.') > 0
-				[key, rest] = key.split('.', 2)
+			while (pos = key.indexOf('.')) > 0
+				rest = key.substr(pos + 1)
+				key = key.substr(0, pos)
+
 				if typeof parent[key] != 'undefined'
 					parent = parent[key]
 				else
