@@ -1,11 +1,10 @@
 (function() {
   var __slice = [].slice;
 
-  angular.module('l10n', []).provider('l10n', {
+  angular.module('l10n', ['ngLocale']).provider('l10n', {
     db: {},
     localeMessages: {},
-    locale: null,
-    add: function(locale, values) {
+    add: function(localeCode, values) {
       var key, _i, _len;
 
       for (_i = 0, _len = values.length; _i < _len; _i++) {
@@ -15,37 +14,34 @@
           delete values[key];
         }
       }
-      if (typeof this.localeMessages[locale] === 'undefined') {
-        this.localeMessages[locale] = {};
+      if (typeof this.localeMessages[localeCode] === 'undefined') {
+        this.localeMessages[localeCode] = {};
       }
-      angular.extend(this.localeMessages[locale], values);
-      if (locale) {
-        return this.setLocale(locale);
-      }
+      return angular.extend(this.localeMessages[localeCode], values);
     },
-    setLocale: function(locale) {
-      var key, value, _ref;
+    setLocale: function(localeCode) {
+      var key;
 
-      _ref = this.db;
-      for (key in _ref) {
-        value = _ref[key];
+      for (key in this.db) {
         if (!angular.isFunction(this.db[key])) {
           delete this.db[key];
         }
       }
-      this.locale = locale;
-      return angular.extend(this.db, this.localeMessages[this.locale]);
+      return angular.extend(this.db, this.localeMessages[localeCode]);
     },
     $get: [
-      '$rootScope', function(rootScope) {
+      '$rootScope', '$locale', function(rootScope, locale) {
         var _this = this;
 
-        this.db.setLocale = function(locale) {
-          _this.setLocale(locale);
-          return rootScope.$broadcast('l10n-locale', locale);
+        console.log(this.setLocale);
+        this.setLocale(locale.id);
+        this.db.setLocale = function(localeCode) {
+          locale.id = localeCode;
+          _this.setLocale(localeCode);
+          return rootScope.$broadcast('l10n-locale', localeCode);
         };
         this.db.getLocale = function() {
-          return _this.locale;
+          return locale.id;
         };
         this.db.get = function() {
           var key, newValue, originalKey, parent, pos, rest, substitutions, value;

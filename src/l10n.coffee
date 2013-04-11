@@ -1,33 +1,32 @@
-angular.module('l10n', [])
+angular.module('l10n', ['ngLocale'])
 .provider('l10n',
 	db: {}
 	localeMessages: {}
-	locale: null
-	add: (locale, values) ->
+	add: (localeCode, values) ->
 		# protection against method redefine
 		for key in values
 			if angular.isFunction @db[method]
 				values['$' + key] = values[key]
 				delete values[key]
 
-		@localeMessages[locale] = {} if typeof @localeMessages[locale] == 'undefined'
-		angular.extend @localeMessages[locale], values
-		@setLocale(locale) if locale
+		@localeMessages[localeCode] = {} if typeof @localeMessages[localeCode] == 'undefined'
+		angular.extend @localeMessages[localeCode], values
 
-	setLocale: (locale) ->
+	setLocale: (localeCode) ->
 		# clean up DB first
-		for key, value of @db
+		for key of @db
 			delete @db[key] unless angular.isFunction @db[key]
-		@locale = locale
-		angular.extend(@db, @localeMessages[@locale])
+		angular.extend(@db, @localeMessages[localeCode])
 
-	$get: ['$rootScope', (rootScope) ->
-		@db.setLocale = (locale) =>
-			@setLocale(locale)
-			rootScope.$broadcast('l10n-locale', locale)
+	$get: ['$rootScope', '$locale', (rootScope, locale) ->
+		@setLocale(locale.id)
 
-		@db.getLocale = =>
-			@locale
+		@db.setLocale = (localeCode) =>
+			locale.id = localeCode
+			@setLocale(localeCode)
+			rootScope.$broadcast('l10n-locale', localeCode)
+
+		@db.getLocale = => locale.id
 
 		@db.get = (key, substitutions...) ->
 			originalKey = key
