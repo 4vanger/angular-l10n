@@ -85,7 +85,7 @@
 
 <script>
 	angular.module('my-l10n-en', ['l10n']).config(['l10nProvider', function(l10n){
-	  l10n.add('en', {
+	  l10n.add('en-us', {
 		document: {
 			title: 'Get message resources'
 		},
@@ -147,7 +147,7 @@
 	  });
 	}]);
 	angular.module('my-l10n-ru', ['l10n']).config(['l10nProvider', function(l10n){
-	  l10n.add('ru', {
+	  l10n.add('ru-ru', {
 		document: {
 			title: 'Локализация строковых ресурсов'
 		},
@@ -228,7 +228,7 @@
 		});
 
 		$scope.toggleLocale = function(){
-			l10n.setLocale(l10n.getLocale() == 'en' ? 'ru' : 'en', $scope);
+			l10n.setLocale(l10n.getLocale() == 'en-us' ? 'ru-ru' : 'en-us', $scope);
 		};
 	});
 </script>
