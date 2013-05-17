@@ -33,8 +33,10 @@
       '$rootScope', '$locale', function(rootScope, locale) {
         var _this = this;
 
-        console.log(this.setLocale);
         this.setLocale(locale.id);
+        this.db.getAllLocales = function() {
+          return _this.localeMessages;
+        };
         this.db.setLocale = function(localeCode) {
           locale.id = localeCode;
           _this.setLocale(localeCode);

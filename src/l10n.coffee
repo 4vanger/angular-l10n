@@ -20,7 +20,8 @@ angular.module('l10n', ['ngLocale'])
 
 	$get: ['$rootScope', '$locale', (rootScope, locale) ->
 		@setLocale(locale.id)
-
+		
+		@db.getAllLocales = => return @localeMessages
 		@db.setLocale = (localeCode) =>
 			locale.id = localeCode
 			@setLocale(localeCode)
