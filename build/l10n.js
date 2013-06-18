@@ -49,6 +49,9 @@
           var key, newValue, originalKey, parent, pos, rest, substitutions, value;
 
           key = arguments[0], substitutions = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+          if (!key) {
+            return '';
+          }
           originalKey = key;
           if (angular.isFunction(this[key])) {
             key = '$' + key;
