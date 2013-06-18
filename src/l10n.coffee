@@ -30,6 +30,7 @@ angular.module('l10n', ['ngLocale'])
 		@db.getLocale = => locale.id
 
 		@db.get = (key, substitutions...) ->
+			return '' unless key
 			originalKey = key
 			# protection against method redefine
 			key = '$' + key if angular.isFunction @[key]
