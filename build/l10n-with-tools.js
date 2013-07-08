@@ -101,6 +101,9 @@
   getValue = function(scope, l10n, value, setValueFn) {
     var args, setValue;
 
+    if (!value) {
+      return value;
+    }
     args = value.split(':');
     setValue = function() {
       var l10nValue;
@@ -139,7 +142,7 @@
 
     directive = 'l10n' + attr.charAt(0).toUpperCase() + attr.substr(1);
     return module.directive(directive, [
-      'l10n', function(l10n) {
+      'l10n', '$interpolate', function(l10n, interpolate) {
         return {
           restrict: 'A',
           priority: 90,
@@ -162,7 +165,9 @@
                   return el.attr(attr, value);
                 };
             }
-            return getValue(scope, l10n, attrs[directive], fn);
+            return attrs.$observe(directive, function() {
+              return getValue(scope, l10n, attrs[directive], fn);
+            });
           }
         };
       }

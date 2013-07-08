@@ -1,4 +1,5 @@
 getValue = (scope, l10n, value, setValueFn) ->
+	return value unless value
 	args = value.split(':')
 
 	setValue = ->
@@ -30,7 +31,7 @@ getValue = (scope, l10n, value, setValueFn) ->
 module = angular.module('l10n-tools', ['l10n'])
 angular.forEach ['text', 'html', 'title', 'placeholder', 'href', 'value'], (attr) ->
 	directive = 'l10n' + attr.charAt(0).toUpperCase() + attr.substr(1)
-	module.directive directive, ['l10n', (l10n) ->
+	module.directive directive, ['l10n', '$interpolate', (l10n, interpolate) ->
 		restrict: 'A'
 		priority: 90
 		link: (scope, el, attrs) ->
@@ -38,8 +39,8 @@ angular.forEach ['text', 'html', 'title', 'placeholder', 'href', 'value'], (attr
 				when 'html' then fn = (value) -> el.html value
 				when 'text' then fn = (value) -> el.text value
 				else fn = fn = (value) -> el.attr attr, value
-
-			getValue scope, l10n, attrs[directive], fn
+			# observe for attribute changes - this can happen due to interpolation
+			attrs.$observe directive, -> getValue scope, l10n, attrs[directive], fn
 	]
 
 module.filter 'l10n', ['l10n', (l10n) ->
