@@ -222,7 +222,7 @@
 		// If do not specify locale explicitly - l10n fallback to first loaded locale - in our case this is also "en"
 		l10nProvider.setLocale('en');
 	})
-	.controller('MyCtrl', function($scope, l10n){
+	.controller('MyCtrl', function($scope, l10n, $timeout){
 		$scope.l10n = l10n;
 		$scope.firstName = 'Andrew';
 		$scope.secondName = 'Miško';
@@ -235,6 +235,15 @@
 		$scope.toggleLocale = function(){
 			l10n.setLocale(l10n.getLocale() == 'en-us' ? 'ru-ru' : 'en-us', $scope);
 		};
+		var flip = true;
+		function doFlip(){
+			$timeout(function(){
+				flip = !flip;
+				doFlip();
+			}, 1000);
+		}
+		doFlip();
+		$scope.getInterpolatedString = function(){return 'interpolation.attribute' + (flip ? '' : '2')};
 	});
 </script>
 </body>
