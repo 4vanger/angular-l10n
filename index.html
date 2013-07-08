@@ -48,6 +48,7 @@
 	<ul>
 		<li>{ {l10n.interpolation.interpolation}}: {{l10n.interpolation.interpolation}}</li>
 		<li>{ {l10n.get('interpolation.usingGet')}}: {{l10n.get('interpolation.usingGet')}}</li>
+		<li>l10n-text="{ { getInterpolatedString() }}": <span l10n-text="{{ getInterpolatedString() }}"></span></li>
 	</ul>
 	<h1 l10n-text="references.title"></h1>
 	<p l10n-text="references.text"></p>
@@ -111,7 +112,9 @@
 			title: 'Using interpolation',
 			text: 'Assign l10n service to some variable is a scope and then use service as a regular hash.',
 			interpolation: 'This message is inserted through interpolation using object property.',
-			usingGet: 'This message is inserted through interpolation using .get() method.'
+			usingGet: 'This message is inserted through interpolation using .get() method.',
+			attribute: 'This message key is calculated within scope function',
+			attribute2: 'and changes every second'
 		},
 		references: {
 			title: 'Translate once',
@@ -173,7 +176,9 @@
 			title: 'Используя интерполяцию',
 			text: 'Присвой сервис l10n переменной $scope и получай потом ресурсы как из обычного хэша.',
 			interpolation: 'Эта строчка вставлена с помощью интерполяции',
-			usingGet: 'Эта строчка вставлена с помощью интерполяции через метод .get()'
+			usingGet: 'Эта строчка вставлена с помощью интерполяции через метод .get()',
+			attribute: 'Значение этой строчки вычисляется в функции scope',
+			attribute2: 'и меняется каждую секунду'
 		},
 		references: {
 			title: 'Переводить меньше',
