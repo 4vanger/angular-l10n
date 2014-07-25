@@ -1,13 +1,13 @@
 {
   "name": "l10n-angular",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Andrew Kulinich <andrew@4vanger.com>",
   "description": "L10n module for Angular.js",
-  "contributors": [ 
+  "contributors": [
     {
       "name": "Andrew Kulinich",
       "email": "github@4vanger.com"
-    } 
+    }
   ],
   "repository": {
     "type": "git",
@@ -17,11 +17,19 @@
     "angular.js",
     "l10n"
   ],
-  "devDependencies" : {
-    "grunt" : "~0.4.1",
-    "grunt-contrib-coffee" : "~0.6.4",
-    "grunt-contrib-uglify" : "~0.1.x",
-    "grunt-contrib-watch"  : "*"
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-coffee": "~0.6.4",
+    "grunt-contrib-uglify": "~0.1.x",
+    "grunt-contrib-watch": "*",
+    "karma-chrome-launcher": "~0.1.4",
+    "karma-jasmine": "~0.1.5",
+    "karma-coffee-preprocessor": "~0.2.1",
+    "grunt-karma": "~0.8.3",
+    "karma-phantomjs-launcher": "~0.1.4"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "karma": "~0.12.17"
+  }
 }
