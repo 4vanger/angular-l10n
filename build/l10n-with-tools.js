@@ -4,9 +4,12 @@
   angular.module('l10n', ['ngLocale']).provider('l10n', {
     db: {},
     localeMessages: {},
+    transform: null,
     add: function(localeCode, values) {
       var key, _i, _len;
-
+      if (this.transform) {
+        values = this.transform(localeCode, values);
+      }
       for (_i = 0, _len = values.length; _i < _len; _i++) {
         key = values[_i];
         if (angular.isFunction(this.db[method])) {
@@ -21,7 +24,6 @@
     },
     setLocale: function(localeCode) {
       var key;
-
       for (key in this.db) {
         if (!angular.isFunction(this.db[key])) {
           delete this.db[key];
@@ -32,7 +34,6 @@
     $get: [
       '$rootScope', '$locale', function(rootScope, locale) {
         var _this = this;
-
         this.setLocale(locale.id);
         this.db.getAllLocales = function() {
           return _this.localeMessages;
@@ -47,7 +48,6 @@
         };
         this.db.get = function() {
           var key, newValue, originalKey, parent, pos, rest, substitutions, value;
-
           key = arguments[0], substitutions = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
           if (!key) {
             return '';
@@ -100,14 +100,12 @@
 
   getValue = function(scope, l10n, value, setValueFn) {
     var args, setValue;
-
     if (!value) {
       return value;
     }
     args = value.split(':');
     setValue = function() {
       var l10nValue;
-
       l10nValue = l10n.get.apply(l10n, args);
       if (l10nValue !== null) {
         value = l10nValue;
@@ -139,7 +137,6 @@
 
   angular.forEach(['text', 'html', 'title', 'placeholder', 'href', 'value'], function(attr) {
     var directive;
-
     directive = 'l10n' + attr.charAt(0).toUpperCase() + attr.substr(1);
     return module.directive(directive, [
       'l10n', '$interpolate', function(l10n, interpolate) {
@@ -148,7 +145,6 @@
           priority: 90,
           link: function(scope, el, attrs) {
             var fn;
-
             switch (attr) {
               case 'html':
                 fn = function(value) {
@@ -178,7 +174,6 @@
     'l10n', function(l10n) {
       return function() {
         var key, subs;
-
         key = arguments[0], subs = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
         return l10n.get.apply(l10n, arguments);
       };

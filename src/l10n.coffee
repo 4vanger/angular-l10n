@@ -2,7 +2,10 @@ angular.module('l10n', ['ngLocale'])
 .provider('l10n',
 	db: {}
 	localeMessages: {}
+	# transform messages using function. Must return object with messages
+	transform: null
 	add: (localeCode, values) ->
+		values = @transform(localeCode, values) if @transform
 		# protection against method redefine
 		for key in values
 			if angular.isFunction @db[method]
