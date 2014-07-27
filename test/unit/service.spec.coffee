@@ -69,10 +69,15 @@ describe 'l10n.get method', ->
 		provider.db = {}
 	it 'should get messages from current locale', ->
 		expect(service.get('message')).toBe 'one'
+	it 'should get messages from current locale as service keys', ->
+		expect(service.message).toBe 'one'
 	it 'should get nested messages', ->
 		expect(service.get('key.with.dots')).toBe 'key.with.dots'
 		expect(service.get('nested.message')).toBe 'nested message'
 		expect(service.get('nested.nested.message')).toBe 'nested nested message'
+	it 'should get nested messages as service keys', ->
+		expect(service.nested.message).toBe 'nested message'
+		expect(service.nested.nested.message).toBe 'nested nested message'
 	it 'should be able to reference messages using @ sign', ->
 		expect(service.get('references.referencedMessage')).toBe 'This is message from "originalMessage" resource'
 		expect(service.get('references.referencedReferencedMessage')).toBe 'This is message from "originalMessage" resource'
@@ -87,6 +92,96 @@ describe 'l10n.get method', ->
 		expect(service.get('subs.hello2', 'name', 'name2')).toBe 'Hello, name and name2'
 		expect(service.get('subs.hello2', 'name', 'name2', 'name3' )).toBe 'Hello, name and name2'
 		expect(service.get('%1 %2 %3 %4 %5 %6 %7 %8 %9 %10', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)).toBe '1 2 3 4 5 6 7 8 9 10'
+
+describe 'l10n directives', ->
+	compile = null
+	scope = null
+	service = null
+	beforeEach ->
+		angular.module('test-directive', ['l10n', 'l10n-tools']).config (l10nProvider) ->
+			l10nProvider.add 'en-US',
+				directive:
+					dirText: 'This line is inserted using l10n-text directive'
+					dirHtml: 'This line is inserted using l10n-html directive. And it has <b><i>HTML markup</i></b>'
+					dirTitle: 'This title is inserted using l10n-title directive'
+					dirPlaceholder: 'This placeholder is inserted using l10n-placeholder directive'
+					dirHref: 'http://en.example.com/Localized link'
+					dirValue: 'This line is inserted using l10n-value directive'
+			l10nProvider.add 'uk-UA',
+				directive:
+					dirText: 'UAThis line is inserted using l10n-text directive'
+					dirHtml: 'UAThis line is inserted using l10n-html directive. And it has <b><i>HTML markup</i></b>'
+					dirTitle: 'UAThis title is inserted using l10n-title directive'
+					dirPlaceholder: 'UAThis placeholder is inserted using l10n-placeholder directive'
+					dirHref: 'http://ua.example.com/Localized link'
+					dirValue: 'UAThis line is inserted using l10n-value directive'
+
+		module 'test-directive'
+		inject ($compile, $rootScope, l10n) ->
+			l10n.setLocale 'en-US'
+			service = l10n
+			scope = $rootScope
+			compile = $compile
+	setHTML = (html) ->
+		el = angular.element(html)
+		compile(el)(scope)
+		scope.$digest()
+		return el
+
+	it 'should support l10n-text attribute', ->
+		expect(setHTML('<div l10n-text="directive.dirText"></div>').html()).toBe 'This line is inserted using l10n-text directive'
+	it 'should support l10n-html attribute', ->
+		expect(setHTML('<div l10n-html="directive.dirHtml"></div>').html()).toBe 'This line is inserted using l10n-html directive. And it has <b><i>HTML markup</i></b>'
+	it 'should support l10n-title attribute', ->
+		expect(setHTML('<div l10n-title="directive.dirTitle"></div>').attr('title')).toBe 'This title is inserted using l10n-title directive'
+	it 'should support l10n-placeholder attribute', ->
+		expect(setHTML('<div l10n-placeholder="directive.dirPlaceholder"></div>').attr('placeholder')).toBe 'This placeholder is inserted using l10n-placeholder directive'
+	it 'should support l10n-href attribute', ->
+		expect(setHTML('<a l10n-href="directive.dirHref"></a>').attr('href')).toBe 'http://en.example.com/Localized link'
+	it 'should support l10n-value attribute', ->
+		expect(setHTML('<input l10n-value="directive.dirValue"/>').attr('value')).toBe 'This line is inserted using l10n-value directive'
+
+	it 'should update directive values when locale is changed', ->
+		service.setLocale 'uk-UA'
+		expect(setHTML('<div l10n-text="directive.dirText"></div>').html()).toBe 'UAThis line is inserted using l10n-text directive'
+		expect(setHTML('<div l10n-html="directive.dirHtml"></div>').html()).toBe 'UAThis line is inserted using l10n-html directive. And it has <b><i>HTML markup</i></b>'
+		expect(setHTML('<div l10n-title="directive.dirTitle"></div>').attr('title')).toBe 'UAThis title is inserted using l10n-title directive'
+		expect(setHTML('<div l10n-placeholder="directive.dirPlaceholder"></div>').attr('placeholder')).toBe 'UAThis placeholder is inserted using l10n-placeholder directive'
+		expect(setHTML('<a l10n-href="directive.dirHref"></a>').attr('href')).toBe 'http://ua.example.com/Localized link'
+		expect(setHTML('<input l10n-value="directive.dirValue"/>').attr('value')).toBe 'UAThis line is inserted using l10n-value directive'
+
+describe 'l10n using interpolation', ->
+	compile = null
+	scope = null
+	beforeEach ->
+		angular.module('test-directive', ['l10n', 'l10n-tools']).config (l10nProvider) ->
+			l10nProvider.add 'en-US',
+				interpolation:
+					message: 'This message is inserted through interpolation using object property.'
+					nested:
+						message: 'this is nested message'
+			l10nProvider.add 'uk-UA',
+				interpolation:
+					message: 'UAThis message is inserted through interpolation using object property.'
+					nested:
+						message: 'UAthis is nested message'
+
+		module 'test-directive'
+		inject ($compile, $rootScope, l10n) ->
+			l10n.setLocale 'en-US'
+			scope = $rootScope
+			scope.l10n = l10n
+			compile = $compile
+	setText = (text) ->
+		el = angular.element('<div>' + text + '</div>')
+		compile(el)(scope)
+		scope.$digest()
+		return el.html()
+
+	it 'should work as service keys', ->
+		expect(setText('{{ l10n.interpolation.message }}')).toBe 'This message is inserted through interpolation using object property.'
+	it 'should work when .get method is used', ->
+		expect(setText('{{ l10n.get("interpolation.message")}}')).toBe 'This message is inserted through interpolation using object property.'
 
 describe 'provider to service', ->
 	it 'default locale can be changed using l10nProvider.setLocale', ->
