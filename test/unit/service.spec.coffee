@@ -86,6 +86,7 @@ describe 'l10n.get method', ->
 		expect(service.get('subs.hello2', 'name')).toBe 'Hello, name and %2'
 		expect(service.get('subs.hello2', 'name', 'name2')).toBe 'Hello, name and name2'
 		expect(service.get('subs.hello2', 'name', 'name2', 'name3' )).toBe 'Hello, name and name2'
+		expect(service.get('%1 %2 %3 %4 %5 %6 %7 %8 %9 %10', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)).toBe '1 2 3 4 5 6 7 8 9 10'
 
 describe 'provider to service', ->
 	it 'default locale can be changed using l10nProvider.setLocale', ->

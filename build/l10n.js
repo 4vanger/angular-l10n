@@ -44,9 +44,6 @@
           return _this.localeMessages;
         };
         this.db.setLocale = function(localeCode) {
-          if (localeCode == null) {
-            localeCode = locale.id;
-          }
           locale.id = localeCode;
           _this.setLocale(localeCode);
           return rootScope.$broadcast('l10n-locale', localeCode);
@@ -77,7 +74,7 @@
           }
           value = parent[key];
           if (value == null) {
-            return originalKey;
+            value = originalKey;
           }
           if (typeof value === 'string') {
             while (value.charAt(0) === '@') {

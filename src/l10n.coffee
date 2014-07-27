@@ -54,7 +54,7 @@ angular.module('l10n', ['ngLocale'])
 					return originalKey
 				key = rest
 			value = parent[key]
-			return originalKey unless value?
+			value = originalKey unless value?
 
 			if typeof value == 'string'
 				# expand @referenced values
