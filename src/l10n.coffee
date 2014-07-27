@@ -1,6 +1,7 @@
 angular.module('l10n', ['ngLocale'])
 .provider('l10n',
 	db: {}
+	locale: null
 	localeMessages: {}
 	# transform messages using function. Must return object with messages
 	transform: null
@@ -16,12 +17,16 @@ angular.module('l10n', ['ngLocale'])
 		angular.extend @localeMessages[localeCode], values
 
 	setLocale: (localeCode) ->
+		# remember preferred locale
+		@locale = localeCode
 		# clean up DB first
 		for key of @db
 			delete @db[key] unless angular.isFunction @db[key]
 		angular.extend(@db, @localeMessages[localeCode])
 
 	$get: ['$rootScope', '$locale', (rootScope, locale) ->
+		# change locale to desired one
+		locale.id = @locale if @locale
 		@setLocale(locale.id)
 		
 		@db.getAllLocales = => return @localeMessages

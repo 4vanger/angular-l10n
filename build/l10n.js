@@ -3,6 +3,7 @@
 
   angular.module('l10n', ['ngLocale']).provider('l10n', {
     db: {},
+    locale: null,
     localeMessages: {},
     transform: null,
     add: function(localeCode, values) {
@@ -24,6 +25,7 @@
     },
     setLocale: function(localeCode) {
       var key;
+      this.locale = localeCode;
       for (key in this.db) {
         if (!angular.isFunction(this.db[key])) {
           delete this.db[key];
@@ -34,11 +36,17 @@
     $get: [
       '$rootScope', '$locale', function(rootScope, locale) {
         var _this = this;
+        if (this.locale) {
+          locale.id = this.locale;
+        }
         this.setLocale(locale.id);
         this.db.getAllLocales = function() {
           return _this.localeMessages;
         };
         this.db.setLocale = function(localeCode) {
+          if (localeCode == null) {
+            localeCode = locale.id;
+          }
           locale.id = localeCode;
           _this.setLocale(localeCode);
           return rootScope.$broadcast('l10n-locale', localeCode);
