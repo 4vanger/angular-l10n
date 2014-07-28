@@ -182,7 +182,37 @@ describe 'l10n using interpolation', ->
 		expect(setText('{{ l10n.interpolation.message }}')).toBe 'This message is inserted through interpolation using object property.'
 	it 'should work when .get method is used', ->
 		expect(setText('{{ l10n.get("interpolation.message")}}')).toBe 'This message is inserted through interpolation using object property.'
+describe 'l10n filter', ->
+	filter = null
+	service = null
+	beforeEach ->
+		angular.module('test-filter', ['l10n', 'l10n-tools']).config (l10nProvider) ->
+			l10nProvider.add 'en-US',
+				filter:
+					hello: 'Hello, filter'
+					hello2: 'Hello %1 and %2'
+			l10nProvider.add 'uk-UA',
+				filter:
+					hello: 'UAHello, filter'
+					hello2: 'UAHello %1 and %2'
 
+		module 'test-filter'
+		inject ($filter, l10n) ->
+			l10n.setLocale 'en-US'
+			service = l10n
+			filter = $filter
+
+	it 'should work', ->
+		expect(filter('l10n')('filter.hello')).toBe 'Hello, filter'
+	it 'should accept params', ->
+		expect(filter('l10n')('filter.hello2')).toBe 'Hello %1 and %2'
+		expect(filter('l10n')('filter.hello2', 'one')).toBe 'Hello one and %2'
+		expect(filter('l10n')('filter.hello2', 'one', 'two')).toBe 'Hello one and two'
+		expect(filter('l10n')('filter.hello2', 'one', 'two', 'three')).toBe 'Hello one and two'
+	it 'should respect active locale', ->
+		expect(filter('l10n')('filter.hello')).toBe 'Hello, filter'
+		service.setLocale 'uk-UA'
+		expect(filter('l10n')('filter.hello')).toBe 'UAHello, filter'
 describe 'provider to service', ->
 	it 'default locale can be changed using l10nProvider.setLocale', ->
 		angular.module('provider2service', ['l10n']).config (l10nProvider) ->
