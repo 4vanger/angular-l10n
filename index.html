@@ -3,7 +3,7 @@
 <head>
 	<title>L10n demo</title>
 	<meta charset="UTF-8">
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.17/angular.min.js"></script>
 	<script src="https://rawgithub.com/4vanger/angular-l10n/master/build/l10n-with-tools.min.js"></script>
 	<link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
 	<style type="text/css">
@@ -220,13 +220,14 @@
 	angular.module('MyApp', ['l10n', 'l10n-tools', 'my-l10n-en', 'my-l10n-ru'])
 	.config(function(l10nProvider){
 		// If do not specify locale explicitly - l10n fallback to first loaded locale - in our case this is also "en"
-		l10nProvider.setLocale('en');
+		l10nProvider.setLocale('en-us');
 	})
 	.controller('MyCtrl', function($scope, l10n, $timeout){
 		$scope.l10n = l10n;
 		$scope.firstName = 'Andrew';
 		$scope.secondName = 'Miško';
 		$scope.personCount = 0;
+		console.log(l10n)
 		$scope.currentMonth = l10n.objects.monthsArr[(new Date()).getMonth()];
 		$scope.$on('l10n-locale', function(){
 			$scope.currentMonth = l10n.objects.monthsArr[(new Date()).getMonth()];
