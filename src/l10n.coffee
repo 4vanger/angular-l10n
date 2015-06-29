@@ -2,6 +2,7 @@ angular.module('l10n', ['ngLocale'])
 .provider('l10n',
 	db: {}
 	locale: null
+	fallbackLocale: null
 	localeMessages: {}
 	# transform messages using function. Must return object with messages
 	transform: null
@@ -37,13 +38,14 @@ angular.module('l10n', ['ngLocale'])
 
 		@db.getLocale = => locale.id
 
-		@db.get = (key, substitutions...) ->
-			return '' unless key
-			originalKey = key
-			# protection against method redefine
-			key = '$' + key if angular.isFunction @[key]
-			parent = @
-			# get value from hash
+		@db.setFallbackLocale = (localeCode) =>
+			@fallbackLocale = localeCode
+
+		@db.getFallbackLocale = => @fallbackLocale
+
+		# get value from hash
+		findValue = (key, messagesRoot) =>
+			parent = messagesRoot
 			while (pos = key.indexOf('.')) > 0
 				rest = key.substr(pos + 1)
 				key = key.substr(0, pos)
@@ -51,10 +53,23 @@ angular.module('l10n', ['ngLocale'])
 				if typeof parent[key] != 'undefined'
 					parent = parent[key]
 				else
-					return originalKey
+					return null
 				key = rest
 			value = parent[key]
-			value = originalKey unless value?
+			value = null unless value?
+			value
+
+		@db.get = (key, substitutions...) ->
+			return '' unless key
+			allLocales = @getAllLocales()
+			fallbackLocale = @getFallbackLocale()
+			# protection against method redefine
+			key = '$' + key if angular.isFunction @[key]
+			value = findValue(key, @)
+			# using fallback locale key if no message exists for current locale
+			if !value && fallbackLocale && allLocales?[fallbackLocale]
+				value = findValue(key, allLocales[fallbackLocale])
+			value = key unless value
 
 			if typeof value == 'string'
 				# expand @referenced values

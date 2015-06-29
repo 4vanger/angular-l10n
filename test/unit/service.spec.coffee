@@ -58,6 +58,9 @@ describe 'l10n.get method', ->
 						'one': '1 person is viewing.'
 						'other': '{} people are viewing.'
 
+			l10nProvider.add 'en-CA',
+				'not-existing-message': 'This exists only in en-CA'
+
 		module 'test-get'
 		inject (l10n) ->
 			service = l10n
@@ -92,6 +95,11 @@ describe 'l10n.get method', ->
 		expect(service.get('subs.hello2', 'name', 'name2')).toBe 'Hello, name and name2'
 		expect(service.get('subs.hello2', 'name', 'name2', 'name3' )).toBe 'Hello, name and name2'
 		expect(service.get('%1 %2 %3 %4 %5 %6 %7 %8 %9 %10', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)).toBe '1 2 3 4 5 6 7 8 9 10'
+
+	it 'should fallback to fallback language if no locale for current language is present', ->
+		expect(service.get('not-existing-message')).toBe 'not-existing-message'
+		service.setFallbackLocale 'en-CA'
+		expect(service.get('not-existing-message')).toBe 'This exists only in en-CA'
 
 describe 'l10n directives', ->
 	compile = null
